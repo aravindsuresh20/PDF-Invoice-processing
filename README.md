@@ -1,1 +1,103 @@
 # PDF-Invoice-processing
+### PDF Invoice Data Extraction System
+
+This project provides a Flask-based web application for automated extraction of key data points from PDF invoice documents. It leverages powerful Python libraries to parse PDF content, identify common invoice fields using regular expressions, and store the extracted information in a structured Excel format for easy analysis and record-keeping.
+
+### Features
+
+* **Automated Data Extraction**: Automatically extracts crucial invoice details such as Invoice Date, Invoice Number, Due Date, Order Number, Payment Transaction ID, Ship To address, and Total Amount from uploaded PDF invoices.
+* **Multiple Extraction Methods**: Utilizes both `PyMuPDF` (fitz) and `pdfplumber` for robust text extraction, ensuring high success rates even with varying PDF structures.
+* **Regular Expression Parsing**: Employs a comprehensive set of regular expressions to accurately identify and pull specific data fields from the extracted text.
+* **Word-to-Number Conversion**: Includes functionality to convert total amounts written in words to numerical format, enhancing data completeness.
+* **Structured Data Output**: Saves all extracted data into a single Excel file (`extracted_data.xlsx`), with each processed PDF's data appended as a new row.
+* **Basic EDA Logging**: Records a simple EDA summary, specifically the total number of PDF files processed, to a text file (`eda_results.txt`).
+* **Web Interface**: Provides a user-friendly Flask web interface for uploading multiple PDF files, viewing extracted results, and downloading the consolidated Excel report.
+
+### Requirements
+
+The application requires the following Python libraries:
+
+* **Python 3.x**
+* **Flask**: For the web application framework.
+* **Pandas**: For data manipulation and saving to Excel.
+* **PyMuPDF (fitz)**: For efficient PDF text extraction.
+* **pdfplumber**: As an alternative/fallback for PDF text extraction.
+* **word2number**: For converting numerical words (e.g., "one hundred") to digits.
+* **`openpyxl`**: (Implicitly required by Pandas for Excel `.xlsx` file operations).
+
+You can install these dependencies using `pip`.
+
+### Installation and Setup
+
+1.  **Project Structure:**
+    ```
+    /your-project-directory
+    │── /templates
+    │   ├── startup.html                 # Initial landing page
+    │   ├── index.html                   # PDF upload page
+    │   └── results.html                 # Displays extracted data
+    │── app.py                           # Flask web application
+    │── extracted_data.xlsx              # Output Excel file (generated)
+    │── eda_results.txt                  # EDA output file (generated)
+    │── temp_*.pdf                       # Temporary files during processing
+    │── requirements.txt                 # Python dependencies (create this file)
+    │── README.md                        # Project documentation (this file)
+    ```
+
+2.  **Create `requirements.txt`**: In your project root, create a file named `requirements.txt` with the following content:
+    ```
+    Flask
+    pandas
+    PyMuPDF
+    pdfplumber
+    word2number
+    openpyxl
+    ```
+
+3.  **Set up a virtual environment (recommended):**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+
+4.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+5.  **Adjust `EXCEL_FILE` Path**:
+    The `app.py` currently has a hardcoded absolute path for the output Excel file:
+    `EXCEL_FILE = r"C:/Users/AS5560/Downloads/Prototypes with front end/PDF Invoice/extracted_data.xlsx"`
+    **It is highly recommended to change this to a relative path** within your project directory for better portability. For example, to save it in the same directory as `app.py`, change it to:
+    `EXCEL_FILE = "extracted_data.xlsx"`
+    Or, to save it in an `output` folder (you would need to create this folder manually if it doesn't exist):
+    `EXCEL_FILE = "output/extracted_data.xlsx"`.
+
+### Project Structure (Detailed)
+
+* **`/templates/`**: Contains the HTML templates that render the web pages:
+    * **`startup.html`**: The initial landing page of the application.
+    * **`index.html`**: The page where users can select and upload PDF invoice files.
+    * **`results.html`**: Displays a summary of the extracted data in a table format after processing.
+* **`app.py`**: The main Flask application script. It includes:
+    * Functions for extracting text from PDFs using `fitz` and `pdfplumber`.
+    * Regular expression patterns and logic for parsing specific invoice data fields (e.g., Invoice Number, Total Amount).
+    * A function to save the extracted data to an Excel file, handling appending to existing files or creating new ones.
+    * Routes for the web interface, handling file uploads, redirects, and rendering templates.
+    * Logic to save a basic EDA result (total files processed) to `eda_results.txt`.
+* **`extracted_data.xlsx`**: (Generated by `app.py`) An Excel spreadsheet where all extracted invoice data is consolidated. Each row represents data from one processed invoice.
+* **`eda_results.txt`**: (Generated by `app.py`) A simple text file containing an EDA summary, primarily indicating the total number of PDF files processed in a session.
+* **`temp_*.pdf`**: Temporary PDF files created in the application's root directory during processing, which are then deleted after extraction.
+
+### Usage
+
+1.  **Start the Application**: From your terminal, navigate to the project's root directory and run:
+    ```bash
+    python app.py
+    ```
+    The Flask development server will start.
+2.  **Access the Web Interface**: Open your web browser and go to `http://127.0.0.1:5000`.
+3.  **Upload Invoices**: On the "Upload" page, you can select and upload one or more PDF invoice files. The application is configured to process up to 25 PDFs per submission.
+4.  **View Results**: After uploading, you will be redirected to the "Results" page, which displays the extracted data in a tabular format.
+5.  **Download Extracted Data**: On the results page, you can click the "Download" link to get the `extracted_data.xlsx` file, containing all the parsed invoice information.
+6.  **Check EDA Summary**: A file named `eda_results.txt` will be generated or updated in your project's root directory, providing a basic summary of the processing.
