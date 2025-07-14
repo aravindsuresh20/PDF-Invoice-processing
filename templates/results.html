@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Extractor - Results</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 30px;">
+    <h1 style="margin: 0; font-size: 1.8rem;">InvoiceExtract</h1>
+    <img src="/static/3.png" alt="Hitachi Logo" style="height: 60px; object-fit: contain;">
+  </header>
+  <div class="container">
+    <h1><i class="fas fa-file-export"></i> Extracted Invoice Data</h1>
+    <div class="results-summary">
+      <h3><i class="fas fa-chart-pie"></i> Processing Summary</h3>
+      <p>Total PDFs processed: {{ num_files }}</p>
+    </div>
+    {% if data %}
+    <table>
+      <thead>
+        <tr>
+          <th>Source PDF</th>
+          <th>Invoice Date</th>
+          <th>Invoice Number</th>
+          <th>Due Date</th>
+          <th>Order Number</th>
+          <th>Payment Transaction ID</th>
+          <th>Ship To</th>
+          <th>Total Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row["Source PDF"] if row["Source PDF"] else 'N/A' }}</td>
+          <td>{{ row["Invoice Date"] if row["Invoice Date"] else 'N/A' }}</td>
+          <td>{{ row["Invoice Number"] if row["Invoice Number"] else 'N/A' }}</td>
+          <td>{{ row["Due Date"] if row["Due Date"] else 'N/A' }}</td>
+          <td>{{ row["Order Number"] if row["Order Number"] else 'N/A' }}</td>
+          <td>{{ row["Payment Transaction ID"] if row["Payment Transaction ID"] else 'N/A' }}</td>
+          <td>{{ row["Ship To"] if row["Ship To"] else 'N/A' }}</td>
+          <td>{{ row["Total Amount"] if row["Total Amount"] else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-results">
+      <i class="fas fa-file-exclamation" style="font-size: 3rem; color: var(--secondary); margin-bottom: 1rem;"></i>
+      <p>No invoice data was extracted. Please try again with different PDF files.</p>
+    </div>
+    {% endif %}
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i> Upload More Invoices
+      </a>
+      <a href="/download" class="back-button" style="margin-left: 10px;">
+        <i class="fas fa-download"></i> Download Result
+      </a>
+    </div>
+  </div>
+  <footer>
+    <p>Powered By Aravind Suresh</p>
+  </footer>
+  <script>
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      setTimeout(() => {
+        cursorFollower.style.left = e.clientX + 'px';
+        cursorFollower.style.top = e.clientY + 'px';
+      }, 100);
+    });
+    const interactiveElements = document.querySelectorAll('button, a, .drop-zone, input[type="file"]');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        cursorFollower.style.width = '20px';
+        cursorFollower.style.height = '20px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorFollower.style.width = '40px';
+        cursorFollower.style.height = '40px';
+      });
+    });
+  </script>
+</body>
+</html>

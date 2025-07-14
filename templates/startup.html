@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Extraction Startup</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: white;
+      overflow: hidden;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 30px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    .center-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .glow-heading {
+      font-size: 4rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(76, 175, 80, 0.5);
+      animation: glow 2s infinite alternate;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    .start-button {
+      padding: 20px 40px;
+      font-size: 1.3rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .start-button:hover {
+      background-color: #45a049;
+    }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+    .cursor, .cursor-follower {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .cursor {
+      width: 8px;
+      height: 8px;
+      background: white;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-follower {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+    }
+
+    /* Glow effect */
+    .floating {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(76, 175, 80, 0.5);
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2), 0 0 20px rgba(76, 175, 80, 0.3);
+      }
+      to {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(76, 175, 80, 0.6);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <header>
+    <h1>InvoiceExtract</h1>
+    <img src="/static/3.png" alt="Hitachi Logo" style="height: 60px; object-fit: contain;">
+  </header>
+
+  <div class="center-box">
+    <h1 class="glow-heading">Invoice Extraction</h1>
+    <p>“One click to clarity — invoice data at your fingertips.”</p>
+    <button class="start-button floating" onclick="location.href='/upload'">
+      <i class="fas fa-play-circle"></i> Get Started
+    </button>
+  </div>
+
+  <footer>
+    Powered By Aravind Suresh
+  </footer>
+
+  <script>
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      setTimeout(() => {
+        cursorFollower.style.left = e.clientX + 'px';
+        cursorFollower.style.top = e.clientY + 'px';
+      }, 100);
+    });
+
+    const interactiveElements = document.querySelectorAll('button, a');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        cursorFollower.style.width = '20px';
+        cursorFollower.style.height = '20px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorFollower.style.width = '40px';
+        cursorFollower.style.height = '40px';
+      });
+    });
+  </script>
+</body>
+</html>

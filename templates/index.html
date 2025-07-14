@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Extractor - Upload</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+    .pdf-icon {
+      width: 32px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 30px;">
+    <h1 style="margin: 0; font-size: 1.8rem;">InvoiceExtract</h1>
+    <img src="/static/3.png" alt="Hitachi Logo" style="height: 60px; object-fit: contain;">
+  </header>
+
+  <div class="container">
+    <div class="hero-text">
+      <h2 class="hero-title">Drag. Drop. Discover.</h2>
+      <p class="hero-subtitle">Your data decoded from the PDF</p>
+    </div>
+    <div class="upload-box floating">
+      <h1><i class="fas fa-file-invoice"></i> Upload Invoice PDF</h1>
+      <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data" class="upload-container">
+        <div class="drop-zone" id="drop-zone">
+          <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);"></i>&emsp;
+          <p>Drag and drop your PDF files here</p>
+          <p class="small">or click to browse files</p>
+          <input type="file" name="pdf_file" id="pdf-file-input" accept=".pdf" multiple style="display: none;">
+        </div>
+        <div id="file-icons"></div>
+        <p id="file-count"></p>
+        <button type="submit">
+          <i class="fas fa-magic"></i> Process Invoices
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>Powered By  Aravind Suresh</p>
+  </footer>
+
+  <script>
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+
+      setTimeout(() => {
+        cursorFollower.style.left = e.clientX + 'px';
+        cursorFollower.style.top = e.clientY + 'px';
+      }, 100);
+    });
+
+    const interactiveElements = document.querySelectorAll('button, a, .drop-zone, input[type="file"]');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        cursorFollower.style.width = '20px';
+        cursorFollower.style.height = '20px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorFollower.style.width = '40px';
+        cursorFollower.style.height = '40px';
+      });
+    });
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('pdf-file-input');
+    const fileCount = document.getElementById('file-count');
+    const fileIcons = document.getElementById('file-icons');
+    const uploadForm = document.getElementById('upload-form');
+
+    let uploadedFiles = [];
+
+    dropZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      uploadedFiles = Array.from(e.dataTransfer.files);
+      updateFileInput();
+      updateFileDisplay();
+    });
+
+    fileInput.addEventListener('change', () => {
+      uploadedFiles = Array.from(fileInput.files);
+      updateFileDisplay();
+    });
+
+    function updateFileInput() {
+      const dataTransfer = new DataTransfer();
+      uploadedFiles.forEach(file => dataTransfer.items.add(file));
+      fileInput.files = dataTransfer.files;
+    }
+
+    function updateFileDisplay() {
+      fileIcons.innerHTML = '';
+      fileCount.textContent = `${uploadedFiles.length} file(s) selected`;
+      if (uploadedFiles.length > 25) {
+        fileCount.innerHTML = '<i class="fas fa-exclamation-circle"></i> Maximum upload capacity: 25 PDFs';
+        fileCount.classList.add('error-message');
+      } else {
+        fileCount.classList.remove('error-message');
+        uploadedFiles.forEach(() => {
+          const img = document.createElement('img');
+          img.src = '/static/pdf-icon.png';
+          img.classList.add('pdf-icon');
+          fileIcons.appendChild(img);
+        });
+      }
+    }
+
+    uploadForm.addEventListener('submit', function (e) {
+      if (uploadedFiles.length === 0) {
+        e.preventDefault();
+        fileCount.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please upload at least one PDF to process.';
+        fileCount.classList.add('error-message');
+      } else if (uploadedFiles.length > 25) {
+        e.preventDefault();
+        fileCount.innerHTML = '<i class="fas fa-exclamation-circle"></i> You cannot upload more than 25 PDFs.';
+        fileCount.classList.add('error-message');
+      }
+    });
+  </script>
+</body>
+</html>
